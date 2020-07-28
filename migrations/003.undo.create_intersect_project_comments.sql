@@ -1,0 +1,1 @@
+DROP TABLE IF EXISTS intersect_project_comments CASCADE;
