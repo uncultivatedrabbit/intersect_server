@@ -19,7 +19,8 @@
     "express": "^4.17.1",
     "helmet": "^3.22.0",
     "mocha": "^7.2.0",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "lodash": ">=4.17.19"
   },
   "devDependencies": {
     "chai": "^4.2.0",
