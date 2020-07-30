@@ -6,8 +6,9 @@ const AuthService = {
   getUserWithEmail(db, email) {
     return db("intersect_users").where({ email }).first();
   },
-  comparePasswords(password, hash) {
-    return bcrypt.compare(password, hash);
+  async comparePasswords(password, hash) {
+    return await password === hash;
+    // return bcrypt.compare(password, hash);
   },
   createJwt(subject, payload) {
     return jwt.sign(payload, config.JWT_SECRET, {

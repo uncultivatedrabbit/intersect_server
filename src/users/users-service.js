@@ -1,9 +1,25 @@
 const xss = require("xss");
 const bcrypt = require("bcryptjs");
+const Treeize = require("treeize");
 
 const regex = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&])[\S]+/;
 
-const UserService = {
+const UsersService = {
+  getAllUsers(db) {
+    return db
+      .from("intersect_users as usr")
+      .select(
+        "usr.id",
+        "usr.full_name",
+        "usr.email",
+        "usr.university_affiliation",
+        "usr.biography",
+        "usr.academic_level"
+      );
+  },
+  getUserById(db, id) {
+    return UsersService.getAllUsers(db).where("id", id).first();
+  },
   hasUserWithEmail(db, email) {
     return db("intersect_users")
       .where({ email })
@@ -35,12 +51,25 @@ const UserService = {
   hashPassword(password) {
     return bcrypt.hash(password, 12);
   },
+  serializeUsers(users) {
+    return users.map(this.serializeUser);
+  },
   serializeUser(user) {
+    const userTree = new Treeize();
+
+    const userData = userTree.grow([user]).getData()[0];
+    console.log(user);
     return {
-      id: user.id,
-      full_name: xss(user.full_name),
-      email: xss(user.email),
-      date_created: new Date(user.date_created),
+      id: userData.id,
+      full_name: xss(userData.full_name),
+      email: xss(userData.email),
+      university_affiliation: xss(userData.university_affiliation),
+      biography: xss(userData.biography),
+      academic_level: xss(userData.academic_level),
+      date_modified: userData.date_modified,
+      date_created: new Date(userData.date_created),
     };
   },
 };
+
+module.exports = UsersService;

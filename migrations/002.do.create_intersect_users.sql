@@ -7,7 +7,7 @@ CREATE TABLE intersect_users(
   biography TEXT, 
   academic_level TEXT, 
   date_created TIMESTAMPTZ NOT NULL DEFAULT now(),
-  date_modified TIMESTAMPTZ, 
+  date_modified TIMESTAMPTZ
 );
 
 ALTER TABLE intersect_projects

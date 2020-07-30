@@ -1,9 +1,24 @@
 const express = require("express");
 const path = require("path");
 const UsersService = require("./users-service");
-
+const checkUserExists = require("./users-utils");
 const usersRouter = express.Router();
 const jsonBodyParser = express.json();
+
+usersRouter.route("/").get((req, res, next) => {
+  UsersService.getAllUsers(req.app.get("db"))
+    .then((users) => {
+      res.json(users);
+    })
+    .catch(next);
+});
+
+usersRouter
+  .route("/:user_id")
+  .all(checkUserExists)
+  .get((req, res) => {
+    res.json(UsersService.serializeUser(res.user));
+  });
 
 usersRouter.post("/", jsonBodyParser, (req, res, next) => {
   const { password, full_name, email } = req.body;

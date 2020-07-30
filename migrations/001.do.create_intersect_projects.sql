@@ -1,4 +1,4 @@
-CREATE TYPE medical_specialty AS ENUM ("Allergy and Immunology", "Anesthesiology", "Dermatology", "Diagnostic Radiology", "Emergency Medicine", "Family Medicine", "Internal Medicine", "Medical Genetics", "Neurology", "Nuclear Medicine", "Obstetrics and Gynecology", "Pathology", "Pediatrics", "Physical Medicine and Rehabilitation", "Preventive Medicine", "Psychiatry", "Radiation Oncology", "Surgery", "Urology");
+CREATE TYPE medical_specialty AS ENUM ('Allergy and Immunology', 'Anesthesiology', 'Dermatology', 'Diagnostic Radiology', 'Emergency Medicine', 'Family Medicine', 'Internal Medicine', 'Medical Genetics', 'Neurology', 'Nuclear Medicine', 'Obstetrics and Gynecology', 'Pathology', 'Pediatrics', 'Physical Medicine and Rehabilitation', 'Preventive Medicine', 'Psychiatry', 'Radiation Oncology', 'Surgery', 'Urology');
 
 CREATE TABLE intersect_projects (
   id SERIAL PRIMARY KEY,
