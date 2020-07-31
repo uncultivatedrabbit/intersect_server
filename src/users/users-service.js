@@ -30,7 +30,7 @@ const UsersService = {
     return db
       .insert(newUser)
       .into("intersect_users")
-      .returning("")
+      .returning("*")
       .then(([user]) => user);
   },
   validatePassword(password) {
@@ -58,7 +58,6 @@ const UsersService = {
     const userTree = new Treeize();
 
     const userData = userTree.grow([user]).getData()[0];
-    console.log(user);
     return {
       id: userData.id,
       full_name: xss(userData.full_name),
@@ -66,8 +65,6 @@ const UsersService = {
       university_affiliation: xss(userData.university_affiliation),
       biography: xss(userData.biography),
       academic_level: xss(userData.academic_level),
-      date_modified: userData.date_modified,
-      date_created: new Date(userData.date_created),
     };
   },
 };

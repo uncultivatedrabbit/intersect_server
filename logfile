@@ -8,3 +8,8 @@
 2020-07-30 15:12:34.206 EDT [18552] LOG:  listening on IPv4 address "0.0.0.0", port 5432
 2020-07-30 15:12:34.229 EDT [18552] LOG:  redirecting log output to logging collector process
 2020-07-30 15:12:34.229 EDT [18552] HINT:  Future log output will appear in directory "log".
+2020-07-30 17:54:23.554 EDT [16224] LOG:  starting PostgreSQL 12.3, compiled by Visual C++ build 1914, 64-bit
+2020-07-30 17:54:23.555 EDT [16224] LOG:  listening on IPv6 address "::", port 5432
+2020-07-30 17:54:23.556 EDT [16224] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+2020-07-30 17:54:23.609 EDT [16224] LOG:  redirecting log output to logging collector process
+2020-07-30 17:54:23.609 EDT [16224] HINT:  Future log output will appear in directory "log".
