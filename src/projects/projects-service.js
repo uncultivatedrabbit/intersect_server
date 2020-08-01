@@ -36,8 +36,10 @@ const ProjectsService = {
       summary: xss(projectData.summary),
       medical_specialty: projectData.medical_specialty,
       medical_subspecialty: xss(projectData.medical_subspecialty),
+      irbstatus: xss(projectData.irbstatus),
       pdf_file: projectData.pdf_file,
       date_created: projectData.date_created,
+      owner_id: projectData.owner_id
     };
   },
   serializeProjectComments(comments) {

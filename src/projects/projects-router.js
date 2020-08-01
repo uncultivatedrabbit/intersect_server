@@ -1,17 +1,65 @@
 const express = require("express");
+const path = require("path");
+const jsonBodyParser = express.json();
 const ProjectsService = require("./projects-service");
 const { requireAuth } = require("../middleware/jwt-auth");
 const checkProjectExists = require("./projects-utils");
 
 const projectsRouter = express.Router();
 
-projectsRouter.route("/").get((req, res, next) => {
-  ProjectsService.getAllProjects(req.app.get("db"))
-    .then((projects) => {
-      res.json(ProjectsService.serializeProjects(projects));
-    })
-    .catch(next);
-});
+projectsRouter
+  .route("/")
+  .get((req, res, next) => {
+    ProjectsService.getAllProjects(req.app.get("db"))
+      .then((projects) => {
+        res.json(ProjectsService.serializeProjects(projects));
+      })
+      .catch(next);
+  })
+  .post(jsonBodyParser, (req, res, next) => {
+    const {
+      owner_id,
+      title,
+      summary,
+      IrbStatus: irbstatus,
+      specialty: medical_specialty,
+      subspecialty: medical_subspecialty,
+      file: pdf_file,
+    } = req.body;
+
+    for (const field of [
+      "owner_id",
+      "title",
+      "summary",
+      "IrbStatus",
+      "title",
+      "specialty",
+    ]) {
+      if (!req.body[field]) {
+        return res.status(400).json({
+          error: `Missing ${field} in request body`,
+        });
+      }
+    }
+    const newProject = {
+      owner_id,
+      title,
+      summary,
+      irbstatus,
+      medical_specialty,
+      medical_subspecialty,
+      pdf_file,
+      date_created: "now()",
+    };
+    return ProjectsService.insertProject(req.app.get("db"), newProject).then(
+      (project) => {
+        res
+          .status(201)
+          .location(path.posix.join(req.originalUrl, `/${project.id}`))
+          .json(ProjectsService.serializeProject(project));
+      }
+    );
+  });
 
 projectsRouter
   .route("/:project_id")
