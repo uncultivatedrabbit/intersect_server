@@ -16,8 +16,22 @@ usersRouter.route("/").get((req, res, next) => {
 usersRouter
   .route("/:user_id")
   .all(checkUserExists)
-  .get((req, res) => {
+  .get((req, res, next) => {
     res.json(UsersService.serializeUser(res.user));
+  })
+  .patch(jsonBodyParser, (req, res, next) => {
+    if (Object.keys(req.body).length !== 2) {
+      return res.status(400).json({
+        error: `Missing data in request body`,
+      });
+    }
+    const { id } = req.body;
+
+    const category = Object.keys(req.body)[1];
+    const updatedData = { [category]: Object.values(req.body)[1] };
+    UsersService.updateUser(req.app.get("db"), id, updatedData).then((data) => {
+      res.status(201).location("/");
+    });
   });
 
 usersRouter.post("/", jsonBodyParser, (req, res, next) => {

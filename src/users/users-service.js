@@ -33,6 +33,9 @@ const UsersService = {
       .returning("*")
       .then(([user]) => user);
   },
+  updateUser(db, id, newDataField) {
+    return db("intersect_users").where({ id }).update(newDataField);
+  },
   validatePassword(password) {
     if (password.length < 8) {
       return "Password must be longer than 8 characters";
