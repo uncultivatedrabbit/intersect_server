@@ -11,6 +11,7 @@ async function checkProjectExists(req, res, next) {
       return res.status(404).json({ error: "Project doesn't exist" });
     }
     res.project = project;
+    next();
   } catch (error) {
     next(error);
   }

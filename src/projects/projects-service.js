@@ -3,10 +3,27 @@ const Treeize = require("treeize");
 
 const ProjectsService = {
   getAllProjects(db) {
-    return db.select("*").from("intersect_projects");
+    return db
+      .from("intersect_projects as proj")
+      .select(
+        "proj.id",
+        "proj.title",
+        "proj.summary",
+        "proj.medical_specialty",
+        "proj.medical_subspecialty",
+        "proj.irbstatus",
+        "proj.date_created",
+        ...userFields,
+        db.raw(
+          `count(DISTINCT com) AS number_of_comments`
+        )
+      )
+      .leftJoin('intersect_project_comments AS com', 'proj.id', "com.project_id")
+      .leftJoin("intersect_users AS usr", "proj.owner_id", "usr.id")
+      .groupBy("proj.id", "usr.id");
   },
   getById(db, id) {
-    return ProjectsService.getAllProjects(db).where("id", id).first();
+    return ProjectsService.getAllProjects(db).where("proj.id", id).first();
   },
   getBySpecialty(db, specialty) {},
   deleteProject(db, id) {
@@ -37,9 +54,9 @@ const ProjectsService = {
       medical_specialty: projectData.medical_specialty,
       medical_subspecialty: xss(projectData.medical_subspecialty),
       irbstatus: xss(projectData.irbstatus),
-      pdf_file: projectData.pdf_file,
       date_created: projectData.date_created,
-      owner_id: projectData.owner_id
+      owner_id: projectData.owner_id,
+      ...projectData,
     };
   },
   serializeProjectComments(comments) {
@@ -58,5 +75,14 @@ const ProjectsService = {
     };
   },
 };
+
+const userFields = [
+  "usr.id AS user:id",
+  "usr.full_name AS user:full_name",
+  "usr.email AS user:email",
+  "usr.university_affiliation AS user:university_affiliation",
+  "usr.academic_level AS user:academic_level",
+  "usr.biography AS user:biography",
+];
 
 module.exports = ProjectsService;
