@@ -1,6 +1,7 @@
 const express = require("express");
 const path = require("path");
 const UsersService = require("./users-service");
+const ProjectService = require("../projects/projects-service");
 const checkUserExists = require("./users-utils");
 const usersRouter = express.Router();
 const jsonBodyParser = express.json();
@@ -76,6 +77,18 @@ usersRouter
     UsersService.updateUser(req.app.get("db"), id, updatedData).then((data) => {
       res.status(201).location("/");
     });
+  });
+
+usersRouter
+  .route("/:user_id/projects")
+  // .all(requireAuth)
+  .all(checkUserExists)
+  .get((req, res, next) => {
+    UsersService.getProjectsForUser(req.app.get("db"), req.params.user_id)
+      .then((projects) => {
+        res.json(ProjectService.serializeProjects(projects));
+      })
+      .catch(next);
   });
 
 module.exports = usersRouter;

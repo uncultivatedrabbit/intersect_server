@@ -20,6 +20,23 @@ const UsersService = {
   getUserById(db, id) {
     return UsersService.getAllUsers(db).where("id", id).first();
   },
+  getProjectsForUser(db, user_id) {
+    return db
+    .from("intersect_projects as proj")
+    .select(
+      "proj.id",
+      "proj.title",
+      "proj.summary",
+      "proj.medical_specialty",
+      "proj.medical_subspecialty",
+      "proj.irbstatus",
+      "proj.date_created",
+      ...userFields,
+    )
+    .where("proj.owner_id", user_id)
+    .rightJoin("intersect_users AS usr", "proj.owner_id", "usr.id")
+    .groupBy("proj.id", "usr.id");
+  },
   hasUserWithEmail(db, email) {
     return db("intersect_users")
       .where({ email })
@@ -71,5 +88,13 @@ const UsersService = {
     };
   },
 };
+
+const userFields = [
+  "usr.id AS user:id",
+  "usr.full_name AS user:full_name",
+  "usr.email AS user:email",
+  "usr.university_affiliation AS user:university_affiliation",
+  "usr.academic_level AS user:academic_level",
+];
 
 module.exports = UsersService;

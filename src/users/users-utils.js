@@ -6,7 +6,6 @@ async function checkUserExists(req, res, next) {
       req.app.get("db"),
       req.params.user_id
     );
-
     if (!user)
       return res.status(404).json({
         error: `User doesn't exist`,
