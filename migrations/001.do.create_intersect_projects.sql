@@ -7,5 +7,6 @@ CREATE TABLE intersect_projects (
   medical_specialty medical_specialty NOT NULL,
   medical_subspecialty VARCHAR(40),
   irbstatus VARCHAR(40) NOT NULL,
+  support_needed TEXT NOT NULL,
   date_created TIMESTAMPTZ DEFAULT now() NOT NULL
 );

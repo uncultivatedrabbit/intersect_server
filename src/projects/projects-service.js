@@ -13,6 +13,7 @@ const ProjectsService = {
         "proj.medical_subspecialty",
         "proj.irbstatus",
         "proj.date_created",
+        "proj.support_needed",
         ...userFields,
         db.raw(
           `count(DISTINCT com) AS number_of_comments`
@@ -56,6 +57,7 @@ const ProjectsService = {
       irbstatus: xss(projectData.irbstatus),
       date_created: projectData.date_created,
       owner_id: projectData.owner_id,
+      support_needed: xss(projectData.support_needed),
       ...projectData,
     };
   },

@@ -21,6 +21,7 @@ projectsRouter
       owner_id,
       title,
       summary,
+      support_needed,
       IrbStatus: irbstatus,
       specialty: medical_specialty,
       subspecialty: medical_subspecialty,
@@ -33,6 +34,7 @@ projectsRouter
       "IrbStatus",
       "title",
       "specialty",
+      "support_needed"
     ]) {
       if (!req.body[field]) {
         return res.status(400).json({
@@ -44,11 +46,13 @@ projectsRouter
       owner_id,
       title,
       summary,
+      support_needed,
       irbstatus,
       medical_specialty,
       medical_subspecialty,
       date_created: "now()",
     };
+
     return ProjectsService.insertProject(req.app.get("db"), newProject).then(
       (project) => {
         res
