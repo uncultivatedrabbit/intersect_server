@@ -15,18 +15,70 @@ const ProjectsService = {
         "proj.date_created",
         "proj.support_needed",
         ...userFields,
-        db.raw(
-          `count(DISTINCT com) AS number_of_comments`
-        )
+        db.raw(`count(DISTINCT com) AS number_of_comments`)
       )
-      .leftJoin('intersect_project_comments AS com', 'proj.id', "com.project_id")
+      .leftJoin(
+        "intersect_project_comments AS com",
+        "proj.id",
+        "com.project_id"
+      )
       .leftJoin("intersect_users AS usr", "proj.owner_id", "usr.id")
       .groupBy("proj.id", "usr.id");
   },
   getById(db, id) {
     return ProjectsService.getAllProjects(db).where("proj.id", id).first();
   },
-  getBySpecialty(db, specialty) {},
+  getBySpecialty(db, medical_specialty, medical_subspecialty) {
+    if (medical_subspecialty) {
+      return db
+        .from("intersect_projects as proj")
+        .select(
+          "proj.id",
+          "proj.title",
+          "proj.summary",
+          "proj.medical_specialty",
+          "proj.medical_subspecialty",
+          "proj.irbstatus",
+          "proj.date_created",
+          "proj.support_needed",
+          ...userFields,
+          db.raw(`count(DISTINCT com) AS number_of_comments`)
+        )
+        .leftJoin(
+          "intersect_project_comments AS com",
+          "proj.id",
+          "com.project_id"
+        )
+        .leftJoin("intersect_users AS usr", "proj.owner_id", "usr.id")
+        .groupBy("proj.id", "usr.id")
+        .where({
+          medical_specialty: medical_specialty,
+          medical_subspecialty: medical_subspecialty,
+        });
+    }
+    return db
+      .from("intersect_projects as proj")
+      .select(
+        "proj.id",
+        "proj.title",
+        "proj.summary",
+        "proj.medical_specialty",
+        "proj.medical_subspecialty",
+        "proj.irbstatus",
+        "proj.date_created",
+        "proj.support_needed",
+        ...userFields,
+        db.raw(`count(DISTINCT com) AS number_of_comments`)
+      )
+      .leftJoin(
+        "intersect_project_comments AS com",
+        "proj.id",
+        "com.project_id"
+      )
+      .leftJoin("intersect_users AS usr", "proj.owner_id", "usr.id")
+      .groupBy("proj.id", "usr.id")
+      .where({ medical_specialty: medical_specialty });
+  },
   deleteProject(db, id) {
     return db.from("intersect_projects").where({ id }.delete());
   },

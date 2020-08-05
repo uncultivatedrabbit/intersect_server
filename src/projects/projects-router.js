@@ -34,7 +34,7 @@ projectsRouter
       "IrbStatus",
       "title",
       "specialty",
-      "support_needed"
+      "support_needed",
     ]) {
       if (!req.body[field]) {
         return res.status(400).json({
@@ -63,9 +63,22 @@ projectsRouter
     );
   });
 
+projectsRouter.route("/search?").get((req, res, next) => {
+  const { medical_specialty, medical_subspecialty } = req.query;
+  ProjectsService.getBySpecialty(
+    req.app.get("db"),
+    medical_specialty,
+    medical_subspecialty
+  )
+    .then((projects) => {
+      res.json(ProjectsService.serializeProjects(projects));
+    })
+    .catch(next);
+});
+
 projectsRouter
   .route("/:project_id")
-   // .all(requireAuth)
+  // .all(requireAuth)
   .all(checkProjectExists)
   .get((req, res, next) => {
     res.json(ProjectsService.serializeProject(res.project));
