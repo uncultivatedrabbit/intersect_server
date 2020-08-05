@@ -80,7 +80,7 @@ const ProjectsService = {
       .where({ medical_specialty: medical_specialty });
   },
   deleteProject(db, id) {
-    return db.from("intersect_projects").where({ id }.delete());
+    return db.from("intersect_projects").where({ id }).delete();
   },
   updateProject(db, id, newDataField) {
     return db.from("intersect_projects").where({ id }).update(newDataField);

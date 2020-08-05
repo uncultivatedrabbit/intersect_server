@@ -9,6 +9,7 @@ const projectsRouter = express.Router();
 
 projectsRouter
   .route("/")
+  .all(requireAuth)
   .get((req, res, next) => {
     ProjectsService.getAllProjects(req.app.get("db"))
       .then((projects) => {
@@ -63,30 +64,41 @@ projectsRouter
     );
   });
 
-projectsRouter.route("/search?").get((req, res, next) => {
-  const { medical_specialty, medical_subspecialty } = req.query;
-  ProjectsService.getBySpecialty(
-    req.app.get("db"),
-    medical_specialty,
-    medical_subspecialty
-  )
-    .then((projects) => {
-      res.json(ProjectsService.serializeProjects(projects));
-    })
-    .catch(next);
-});
+projectsRouter
+  .route("/search?")
+  .all(requireAuth)
+  .get((req, res, next) => {
+    const { medical_specialty, medical_subspecialty } = req.query;
+    ProjectsService.getBySpecialty(
+      req.app.get("db"),
+      medical_specialty,
+      medical_subspecialty
+    )
+      .then((projects) => {
+        res.json(ProjectsService.serializeProjects(projects));
+      })
+      .catch(next);
+  });
 
 projectsRouter
   .route("/:project_id")
-  // .all(requireAuth)
+  .all(requireAuth)
   .all(checkProjectExists)
   .get((req, res, next) => {
     res.json(ProjectsService.serializeProject(res.project));
+  })
+  .delete((req, res, next) => {
+    const id = res.project.id;
+    ProjectsService.deleteProject(req.app.get("db"), id)
+      .then((data) => {
+        res.json("Data successfully deleted");
+      })
+      .catch(next);
   });
 
 projectsRouter
   .route("/:project_id/comments")
-  // .all(requireAuth)
+  .all(requireAuth)
   .all(checkProjectExists)
   .get((req, res) => {
     ProjectsService.getCommentsForProject(

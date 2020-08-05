@@ -6,10 +6,11 @@ const checkUserExists = require("./users-utils");
 const usersRouter = express.Router();
 const jsonBodyParser = express.json();
 const xss = require("xss");
+const { requireAuth } = require("../middleware/jwt-auth");
 
 usersRouter
   .route("/")
-  .get((req, res, next) => {
+  .get(requireAuth, (req, res, next) => {
     UsersService.getAllUsers(req.app.get("db"))
       .then((users) => {
         res.json(users);
@@ -61,6 +62,7 @@ usersRouter
 usersRouter
   .route("/:user_id")
   .all(checkUserExists)
+  .all(requireAuth)
   .get((req, res, next) => {
     res.json(UsersService.serializeUser(res.user));
   })
@@ -81,7 +83,7 @@ usersRouter
 
 usersRouter
   .route("/:user_id/projects")
-  // .all(requireAuth)
+  .all(requireAuth)
   .all(checkUserExists)
   .get((req, res, next) => {
     UsersService.getProjectsForUser(req.app.get("db"), req.params.user_id)
