@@ -6,4 +6,6 @@ CREATE TABLE intersect_project_comments (
         REFERENCES intersect_projects(id) ON DELETE CASCADE NOT NULL,
     owner_id INTEGER
         REFERENCES intersect_users(id) ON DELETE CASCADE NOT NULL
+    parent_comment_id INTEGER
+        REFERENCES intersect_project_comments(id) ON DELETE CASCADE
 );

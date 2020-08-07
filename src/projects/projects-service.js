@@ -92,6 +92,20 @@ const ProjectsService = {
       .returning("*")
       .then((rows) => rows[0]);
   },
+  getCommentsForProject(db, project_id) {
+    return db
+      .from("intersect_project_comments AS com")
+      .select(
+        "com.id",
+        "com.text",
+        "com.date_created",
+        "com.parent_comment_id",
+        ...userFields
+      )
+      .where("com.project_id", project_id)
+      .leftJoin("intersect_users AS usr", "com.owner_id", "usr.id")
+      .groupBy("com.id", "usr.id");
+  },
   serializeProjects(projects) {
     return projects.map(this.serializeProject);
   },
@@ -114,8 +128,9 @@ const ProjectsService = {
     };
   },
   serializeProjectComments(comments) {
-    return comments.map(this.searlizeProjectComment);
+    return comments.map(this.serializeProjectComment);
   },
+
   serializeProjectComment(comment) {
     const commentTree = new Treeize();
     const commentData = commentTree.grow([comment]).getData()[0];
@@ -126,17 +141,19 @@ const ProjectsService = {
       project_id: commentData.project_id,
       owner_id: commentData.owner_id,
       date_created: commentData.date_created,
+      parent_comment_id: commentData.parent_comment_id || null,
+      ...commentData,
     };
   },
 };
 
 const userFields = [
-  "usr.id AS user:id",
-  "usr.full_name AS user:full_name",
-  "usr.email AS user:email",
-  "usr.university_affiliation AS user:university_affiliation",
-  "usr.academic_level AS user:academic_level",
-  "usr.biography AS user:biography",
+  "usr.id AS owner:id",
+  "usr.full_name AS owner:full_name",
+  "usr.email AS owner:email",
+  "usr.university_affiliation AS owner:university_affiliation",
+  "usr.academic_level AS owner:academic_level",
+  "usr.biography AS owner:biography",
 ];
 
 module.exports = ProjectsService;

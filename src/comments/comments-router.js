@@ -1,6 +1,6 @@
 const express = require("express");
 const path = require("path");
-const CommentService = require("./comments-service");
+const CommentsService = require("./comments-service");
 const { requireAuth } = require("../middleware/jwt-auth");
 
 const commentsRouter = express.Router();
@@ -8,6 +8,13 @@ const jsonBodyParser = express.json();
 
 commentsRouter
   .route("/")
+  .get((req, res, next) => {
+    CommentsService.getAllComments(req.app.get("db"))
+      .then((comments) => {
+        res.json(CommentsService.serializeComments(comments));
+      })
+      .catch(next);
+  })
   .post(requireAuth, jsonBodyParser, (req, res, next) => {
     const { project_id, text } = req.body;
     const newComment = { project_id, text };
@@ -18,12 +25,12 @@ commentsRouter
         });
 
     newComment.owner_id = req.owner_id;
-    CommentService.insertComment(req.app.get("db"), newComment)
+    CommentsService.insertComment(req.app.get("db"), newComment)
       .then((comment) => {
         res
           .status(201)
           .location(path.posix.join(req.originalUrl, `/${comment.id}`))
-          .json(CommentService.serializeComment(comment));
+          .json(CommentsService.serializeComment(comment));
       })
       .catch(next);
   });
