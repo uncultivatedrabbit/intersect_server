@@ -16,16 +16,25 @@ commentsRouter
       .catch(next);
   })
   .post(requireAuth, jsonBodyParser, (req, res, next) => {
-    const { project_id, text } = req.body;
-    const newComment = { project_id, text };
-    for (const [k, v] of Object.entries(newComment))
+    const {
+      projectId,
+      newComment,
+      submitterId,
+      parentCommentOwnerId,
+    } = req.body;
+    const commentBody = {
+      project_id: projectId,
+      text: newComment,
+      owner_id: submitterId,
+      parent_comment_id: parentCommentOwnerId,
+    };
+    for (const [k, v] of ["projectId, newComment, submitterId"])
       if (v == null)
         return res.status(400).json({
           error: `Missing '${k}' in request body`,
         });
 
-    newComment.owner_id = req.owner_id;
-    CommentsService.insertComment(req.app.get("db"), newComment)
+    CommentsService.insertComment(req.app.get("db"), commentBody)
       .then((comment) => {
         res
           .status(201)

@@ -82,7 +82,7 @@ projectsRouter
 
 projectsRouter
   .route("/:project_id")
-  // .all(requireAuth)
+  .all(requireAuth)
   .all(checkProjectExists)
   .get((req, res, next) => {
     res.json(ProjectsService.serializeProject(res.project));
@@ -98,7 +98,7 @@ projectsRouter
 
 projectsRouter
   .route("/:project_id/comments")
-  // .all(requireAuth)
+  .all(requireAuth)
   .all(checkProjectExists)
   .get((req, res, next) => {
     ProjectsService.getCommentsForProject(

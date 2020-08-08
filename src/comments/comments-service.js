@@ -1,11 +1,15 @@
 const xss = require("xss");
 
 const CommentsService = {
-  getAllComments(db){
-    return db.from('intersect_project_comments').select("*")
+  getAllComments(db) {
+    return db.from("intersect_project_comments").select("*");
   },
   getById(db, id) {
-    return db.from("intersect_project_comments").select("*").where("id", id).first();
+    return db
+      .from("intersect_project_comments")
+      .select("*")
+      .where("id", id)
+      .first();
   },
   insertComment(db, newComment) {
     return db
@@ -13,7 +17,7 @@ const CommentsService = {
       .into("intersect_project_comments")
       .returning("*")
       .then(([comment]) => comment)
-      .then((comment) => CommentService.getById(db, comment.id));
+      .then((comment) => CommentsService.getById(db, comment.id));
   },
   serializeComments(comments) {
     return comments.map(this.serializeComment);
@@ -25,7 +29,7 @@ const CommentsService = {
       project_id: comment.project_id,
       owner_id: comment.owner_id,
       date_created: comment.date_created,
-      parent_comment_id: comment.parent_comment_id
+      parent_comment_id: comment.parent_comment_id,
     };
   },
 };
